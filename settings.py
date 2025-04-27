@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import validator, ValidationError
+from pydantic import validator
 
 
 class Settings(BaseSettings):
@@ -10,8 +10,7 @@ class Settings(BaseSettings):
     def validate_environment(cls, value):
         allowed_values = {"dev", "test", "prod"}
         if value not in allowed_values:
-            raise ValidationError(
-                f"Nieprawidłowa wartość dla ENVIRONMENT: '{value}'. "
-                f"Dozwolone wartości to {allowed_values}."
+            raise ValueError(
+                f"Invalid ENVIRONMENT value: {value}. Must be one of {allowed_values}."
             )
         return value
