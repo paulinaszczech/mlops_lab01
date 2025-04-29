@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import validator
+from pydantic import field_validator
 import os
 import yaml
 
@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str  # Zmienna środowiskowa
     APP_NAME: str  # Nazwa aplikacji
 
-    @validator("ENVIRONMENT")
+    @field_validator("ENVIRONMENT")
     def validate_environment(cls, value):
         allowed_values = {"dev", "test", "prod"}
         if value not in allowed_values:
@@ -24,5 +24,4 @@ with open("secrets.yaml", "r") as file:
 # Załadowanie wartości do zmiennych środowiskowych
 os.environ["API_KEY"] = secrets["api_key"]
 
-# Możesz teraz używać zmiennej API_KEY w całej aplikacji
 print(f"API Key: {os.environ['API_KEY']}")
