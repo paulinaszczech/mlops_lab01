@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from api.models.iris import PredictRequest, PredictResponse
 from inference import load_model, predict
 
-
 app = FastAPI()
 
+# model jako globalna zmienna (ładowany raz przy starcie serwera)
 model = load_model()
 
 
@@ -20,11 +20,16 @@ def health_check():
 
 @app.post("/predict", response_model=PredictResponse)
 def predict_endpoint(request: PredictRequest):
-    input_data = [
+    features = [
         request.sepal_length,
         request.sepal_width,
         request.petal_length,
         request.petal_width,
     ]
-    prediction = predict(model, input_data)
-    return PredictResponse(prediction=prediction)
+    raw_prediction = predict(model, features)
+
+    # Jeśli chcesz tłumaczyć na nazwy klas:
+    class_names = ["setosa", "versicolor", "virginica"]
+    prediction_str = class_names[int(raw_prediction)]
+
+    return PredictResponse(prediction=prediction_str)
